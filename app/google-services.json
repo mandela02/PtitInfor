@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "559625819266",
+    "firebase_url": "https://ptitinfor-caa8f.firebaseio.com",
+    "project_id": "ptitinfor-caa8f",
+    "storage_bucket": "ptitinfor-caa8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559625819266:android:0532bf612c6454d2",
+        "android_client_info": {
+          "package_name": "ptit.wayne.com.ptitinfor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559625819266-mkfnjasj4kov83olvcrfk2bf6ek4e3aj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ptit.wayne.com.ptitinfor",
+            "certificate_hash": "5276655fcff2b79b1c6a2bfa882705789197c36b"
+          }
+        },
+        {
+          "client_id": "559625819266-gmhsfh6vq1jgpcsm1co5miu757qgkhmq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFtNG5wkRUw6Trt9J4ThhMWidYfRQHI_A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "559625819266-gmhsfh6vq1jgpcsm1co5miu757qgkhmq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
