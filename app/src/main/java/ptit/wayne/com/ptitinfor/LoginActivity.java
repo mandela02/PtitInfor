@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import ptit.wayne.com.ptitinfor.model.Account;
+
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
@@ -35,9 +37,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public void testDatabase() {
         /*FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Student");
-        Student std_1 = new Student("Tri", "1234", "1234567890");
-        Student std_2 = new Student("Huong", "1111", "0987654321");
+        DatabaseReference myRef = database.getReference("Account");
+        Account std_1 = new Account("Tri", "1234", "1234567890");
+        Account std_2 = new Account("Huong", "1111", "0987654321");
         myRef.child("1234567890").setValue(std_1);
         myRef.child("0987654321").setValue(std_2);*/
     }
@@ -81,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         Database db = new Database();
         db.searchInDatabase(sStudentID, sPassword, new DatabaseCallback() {
             @Override
-            public void onSuccess(Student value) {
+            public void onSuccess(Account value) {
                 onLoginSuccess();
                 progressDialog.dismiss();
             }

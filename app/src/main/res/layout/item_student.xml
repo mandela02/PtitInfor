@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginBottom="@dimen/dp_5">
+
+        <ImageView
+            android:id="@+id/image_face"
+            android:layout_width="@dimen/dp_90"
+            android:layout_height="@dimen/dp_100"
+            android:layout_marginLeft="@dimen/dp_5"
+            android:scaleType="fitCenter"
+            android:src="@drawable/batman"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image_face"
+            android:background="@color/white"
+            android:layout_marginLeft="@dimen/dp_5"
+            android:layout_marginEnd="@dimen/dp_5">
+            <TextView
+                android:id="@+id/text_name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_30"
+                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="@dimen/dp_5"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="hello"
+                android:textColor="@android:color/black"
+                android:textSize="18dp"/>
+
+            <TextView
+                android:id="@+id/text_studentID"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_25"
+                android:layout_below="@id/text_name"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_marginLeft="5dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="hello"
+                android:textSize="10dp"/>
+
+            <TextView
+                android:id="@+id/text_status"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_30"
+                android:layout_below="@id/text_studentID"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_marginLeft="5dp"
+                android:lines="1"
+                android:text="hello"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_10"
+                android:textColor="@android:color/black"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>

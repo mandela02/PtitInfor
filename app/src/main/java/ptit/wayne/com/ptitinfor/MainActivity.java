@@ -2,95 +2,107 @@ package ptit.wayne.com.ptitinfor;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import ptit.wayne.com.ptitinfor.model.Account;
+import ptit.wayne.com.ptitinfor.model.Rooms;
+import ptit.wayne.com.ptitinfor.model.Time;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
-    private NavigationView navigationView;
-    private DrawerLayout drawer;
-    private Toolbar toolbar;
-    private View navHeader;
-    private static final String TAG_PROFILE = "Your profile";
-    private static final String TAG_SEARCH = "Find your mate";
-    private static final String TAG_EDIT = "Edit your profile";
-    public static String CURRENT_TAG = TAG_PROFILE;
-    private String activityTitles[] = {"Your profile", "Find your mate", "Edit your profile"};
-    private boolean shouldLoadHomeFragOnBackPress = true;
-    public static int navItemIndex = 0;
-    private ImageView mImageStudent;
     private TextView mTxtStudentName;
     private TextView mTxtStudentID;
     private Database db;
+    private SearchView mSearchView;
+    private LinearLayoutManager mLinearLayoutManager;
+    private RoomAdapter mRoomAdapter;
+    private RecyclerView mRecyclerView;
+    private List<Rooms> mRoomsList;
+    private boolean isSearching = false;
+    private String currentDateTimeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         initView();
         getInformation();
-        if (savedInstanceState == null) {
-            navItemIndex = 0;
-            CURRENT_TAG = TAG_PROFILE;
-            //loadCurrentFragment();
-        }
+        addRoom();
+        initRecyclerView();
     }
 
     public void initView() {
-        drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView = findViewById(R.id.nav_view);
-        navHeader = navigationView.getHeaderView(0);
-        setUpNavigationView();
         db = new Database();
+        currentDateTimeString = DateFormat.getDateInstance().format(new Date());
+        ActionBar ab = getSupportActionBar();
+        ab.setTitle("Danh sách lớp thi");
+        ab.setSubtitle(currentDateTimeString);
+        //setTitle("Danh sách lớp thi");
     }
 
     @Override
-    public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawers();
-            return;
-        }
-        if (shouldLoadHomeFragOnBackPress) {
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_PROFILE;
-                //loadCurrentFragment();
-                return;
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        MenuItem menuSearch = menu.findItem(R.id.menu_search);
+        mSearchView = (SearchView) menuSearch.getActionView();
+        initSearchView();
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void initSearchView() {
+        isSearching = !isSearching;
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
-        }
-        super.onBackPressed();
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!newText.equals("")) {
+                    int i;
+                    List<Rooms> mSearchList = new ArrayList<>();
+                    for (i = 0; i < mRoomsList.size(); i++)
+                        if (mRoomsList.get(i).getRoom().contains(newText)) {
+                            mSearchList.add(mRoomsList.get(i));
+                        }
+                    mRoomAdapter = new RoomAdapter(mSearchList, MainActivity.this);
+                    mRecyclerView.setAdapter(mRoomAdapter);
+                }
+                return false;
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                isSearching = !isSearching;
+                mRoomAdapter = new RoomAdapter(mRoomsList, MainActivity.this);
+                mRecyclerView.setAdapter(mRoomAdapter);
+                return false;
+            }
+        });
     }
 
     public void getInformation() {
-        mImageStudent = navHeader.findViewById(R.id.image_student);
-        mTxtStudentName = navHeader.findViewById(R.id.txt_studentName);
-        mTxtStudentID = navHeader.findViewById(R.id.txt_studentID);
         Intent getIntent = getIntent();
         final String ID = getIntent.getStringExtra("studentID");
         db.searchStudentByID(ID, new DatabaseCallback() {
             @Override
-            public void onSuccess(Student value) {
-                mTxtStudentName.setText(value.getStudentName());
-                mTxtStudentID.setText(value.getStudentID());
-                //mImageStudent.setImageResource(R.drawable.ic_launcher_background);
+            public void onSuccess(Account value) {
+              /*  mTxtStudentName.setText(value.getName());
+                mTxtStudentID.setText(value.getID());*/
             }
 
             @Override
@@ -99,76 +111,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setUpNavigationView() {
-        navigationView.setNavigationItemSelectedListener(
-            new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.nav_your_profile:
-                            navItemIndex = 0;
-                            CURRENT_TAG = TAG_PROFILE;
-                            Toast.makeText(MainActivity.this, "1", Toast.LENGTH_SHORT).show();
-                            drawer.closeDrawers();
-                            break;
-                        case R.id.nav_search_student:
-                            navItemIndex = 1;
-                            CURRENT_TAG = TAG_SEARCH;
-                            Toast.makeText(MainActivity.this, "2", Toast.LENGTH_SHORT).show();
-                            drawer.closeDrawers();
-                            break;
-                        case R.id.nav_edit_your_profile:
-                            navItemIndex = 2;
-                            CURRENT_TAG = TAG_EDIT;
-                            Toast.makeText(MainActivity.this, "3", Toast.LENGTH_SHORT).show();
-                            drawer.closeDrawers();
-                            break;
-                        case R.id.nav_exit:
-                            finish();
-                            break;
-                        default:
-                            navItemIndex = 0;
-                    }
-                    if (menuItem.isChecked()) {
-                        menuItem.setChecked(false);
-                    } else {
-                        menuItem.setChecked(true);
-                    }
-                    menuItem.setChecked(true);
-                    //loadCurrentFragment();
-                    return true;
-                }
-            });
-        ActionBarDrawerToggle actionBarDrawerToggle =
-            new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer,
-                R.string.closeDrawer) {
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    super.onDrawerClosed(drawerView);
-                }
-
-                @Override
-                public void onDrawerOpened(View drawerView) {
-                    super.onDrawerOpened(drawerView);
-                }
-            };
-        drawer.setDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+    private void addRoom() {
+        List<Time> time = new ArrayList<>();
+        time.add(new Time(currentDateTimeString , "11:11"));
+        time.add(new Time(currentDateTimeString , "00:11"));
+        time.add(new Time(currentDateTimeString , "01:11"));
+        time.add(new Time(currentDateTimeString , "02:11"));
+        time.add(new Time(currentDateTimeString , "03:11"));
+        time.add(new Time(currentDateTimeString , "04:11"));
+        time.add(new Time(currentDateTimeString , "05:11"));
+        mRoomsList = new ArrayList<>();
+        mRoomsList.add(new Rooms("101A1", time));
+        mRoomsList.add(new Rooms("102A2", time));
+        mRoomsList.add(new Rooms("103A3", time));
+        mRoomsList.add(new Rooms("104A4", time));
+        mRoomsList.add(new Rooms("105A5", time));
     }
 
-    /*private Fragment getCurrentFragment() {
-        MapFragment mapFragment = new MapFragment();
-        BuildFragment buildFragment = new BuildFragment();
-        HistoryFragment historyFragment = new HistoryFragment();
-        switch (navItemIndex) {
-            case 0:
-                return mapFragment;
-            case 1:
-                return buildFragment;
-            case 2:
-                return historyFragment;
-            default:
-                return mapFragment;
-        }
-    }*/
+    public void initRecyclerView() {
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView = findViewById(R.id.recycler_room);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mRoomAdapter = new RoomAdapter(mRoomsList, MainActivity.this);
+        mRecyclerView.setAdapter(mRoomAdapter);
+    }
 }

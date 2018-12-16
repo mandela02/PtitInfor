@@ -1,4 +1,4 @@
-package ptit.wayne.com.ptitinfor;
+package ptit.wayne.com.ptitinfor.model;
 
 import java.util.List;
 
